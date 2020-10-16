@@ -58,7 +58,7 @@ The following navigation keys are supported
  - &larr; - Go left 
  - ctrl-a - Go to start
  - ctrl-e - Go to end
- - double-press esc - Erase Line
+ - double-press esc - Erase line
 
 The exact history behavior is slighly different than libreadline. The first history entry is a blank line
 and over-navigation will just rotate instead of sounding a bell. Also, duplicate consecutive history items
