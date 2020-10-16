@@ -125,7 +125,7 @@ string read_line(const string& prompt="> "){
 	fflush(stdout);
 	
 	//save history
-	if(!line.empty()){
+	if(!line.empty() && line!=history.back()){
 		history.push_back(line);
 	}
 	return line;
