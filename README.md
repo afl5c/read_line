@@ -12,7 +12,7 @@ for the ability to read a line with history and navigation.
 ## Solution
 
 This implements a single function, read_line(), which reads a line while automatically
-handling history and navigation (using Posix terminal control codes).
+handling history and navigation using [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code).
 
 Also I hereby put this in the public domain, so you can use this for whatever.
 
