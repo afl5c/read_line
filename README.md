@@ -1,6 +1,6 @@
 # read_line
 
-A small libreadline replacement. Inspired by [antirez/linenoise](/antirez/linenoise)
+A small libreadline replacement. Inspired by [antirez/linenoise](https://github.com/antirez/linenoise)
 except read_line is even smaller (~100 LOC) and simpler.
 
 ## Problem
