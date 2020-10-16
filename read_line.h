@@ -76,6 +76,10 @@ string read_line(const string& prompt="> "){
 		else if(c==3) raise(SIGINT); //ctrl-c
 		else if(c==5) pos = line.size(); //ctrl-e (go to line end)
 		else if(c==13) break; //enter
+		else if(c==26){ //ctrl-z
+			raise(SIGTSTP);
+			tcsetattr(STDIN_FILENO,TCSANOW,&raw); //must re-set raw mode
+		}
 		else if(c==27){ //escape
 			//differentiate between escape sequence and escape to clear
 			read(STDIN_FILENO,&c,1);
