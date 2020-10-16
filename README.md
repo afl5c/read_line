@@ -61,7 +61,8 @@ The following navigation keys are supported
  - double-press esc - Erase Line
 
 The exact history behavior is slighly different than libreadline. The first history entry is a blank line
-and over-navigation will just rotate instead of sounding a bell.
+and over-navigation will just rotate instead of sounding a bell. Also, duplicate consecutive history items
+are not saved.
 
 A double escape clears the line, which makes it consistent with Windows-style console behavior.
 
