@@ -39,7 +39,7 @@ Linenoise supports various rare terminals. I do not; I've just tested this on so
 MacOS, and Raspberry Pi. (Note that Windows' console supports history and navigation natively).
 
 Linenoise and other libraries set an atexit() handler to reset the tty attributes in case of
-an interrupt. In my testing, this doesn't seem to be necessary
+an interrupt. In my testing, this doesn't seem to be necessary, so I don't do it.
 
 I use C++ which provides &lt;string&gt; and &lt;vector&gt;, so I don't have to manually
 implement string or array manipulation. This also allows for unlimited lengths (in theory)

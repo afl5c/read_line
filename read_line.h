@@ -67,7 +67,7 @@ string read_line(const string& prompt="> "){
 	//process line
 	string line;
 	int pos = 0; //where to write or delete next character
-	int off = 0;
+	int off = 0; //offset in history
 	while(1){
 		char c;
 		read(STDIN_FILENO,&c,1);
