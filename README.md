@@ -1,7 +1,7 @@
 # read_line
 
 A small libreadline replacement. Inspired by [antirez/linenoise](https://github.com/antirez/linenoise)
-except read_line is even smaller (~100 LOC) and simpler.
+except read_line is even smaller (&lt;200 LOC) and simpler.
 
 ## Problem
 
@@ -12,7 +12,7 @@ for the ability to read a line with history and navigation.
 ## Solution
 
 This implements a single function, read_line(), which reads a line while automatically
-handling history and navigation using [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code).
+handling history and navigation using [VT100 escape codes](https://espterm.github.io/docs/VT100%20escape%20codes.html).
 
 Also I hereby put this in the public domain, so you can use this for whatever.
 
@@ -46,7 +46,7 @@ implement string or array manipulation. This also allows for unlimited lengths (
 so I don't have to set MAX_LINE/MAX_HISTORY constants. I store the history as a static
 variable, so I don't need a global history variable either.
 
-Linenoise supports other stuff like multiline inputs, completions, and suggestions. I do not.
+Linenoise supports other stuff like completions and suggestions. I do not.
 
 ### Navigation Support
 
@@ -58,6 +58,7 @@ The following navigation keys are supported
  - &larr; - Go left 
  - ctrl-a - Go to start
  - ctrl-e - Go to end
+ - ctlr-l - Clear screen (in case multiline input overflows terminal)
  - double-press esc - Erase line
 
 The exact history behavior is slighly different than libreadline. The first history entry is a blank line
@@ -67,7 +68,3 @@ are not saved.
 A double escape clears the line, which makes it consistent with Windows-style console behavior.
 
 For these reasons, I would actually argue that the navigation scheme here is actually better than libreadline.
-
-
-
-

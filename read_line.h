@@ -12,6 +12,7 @@ License: Public Domain
 #include <signal.h>
 #include <unistd.h> //for isatty()
 #include <termios.h> //for tcgetattr()/tcsetattr()
+#include <sys/ioctl.h> //for ioctl()
 #endif
 
 #include <vector>
@@ -19,7 +20,9 @@ License: Public Domain
 using namespace std;
 
 //read line the lazy way. on windows, history is automatically supported so this is all we need
-string read_line_lazy(){
+string read_line_lazy(const string& prompt){
+	printf("%s",prompt.c_str());
+	fflush(stdout);
 	string buf;
 	while(!feof(stdin)){
 		char c = fgetc(stdin);
@@ -32,26 +35,29 @@ string read_line_lazy(){
 
 //read a line from stdin, while supporting history on posix
 string read_line(const string& prompt="> "){
+	//special case for windows
+#ifdef _WIN32
+	return read_line_lazy(prompt);
+#else
+	
+	//if not a tty (like a file pipe)
+	if(!isatty(STDIN_FILENO)){
+		return read_line_lazy(prompt);
+	}
+	
 	//init history
 	static vector<string> history;
 	if(history.empty()){
 		history.push_back("");
 	}
 	
+	//save cursor position
+	printf("\0337");
+	
 	//show prompt
 	printf("%s",prompt.c_str());
 	fflush(stdout);
 
-	//special case for windows
-#ifdef _WIN32
-	return read_line_lazy();
-#else
-	
-	//if not a tty (like a file pipe)
-	if(!isatty(STDIN_FILENO)){
-		return read_line_lazy();
-	}
-	
 	//get original mode
 	termios org;
 	tcgetattr(STDIN_FILENO,&org);
@@ -68,15 +74,27 @@ string read_line(const string& prompt="> "){
 	string line;
 	int pos = 0; //where to write or delete next character
 	int off = 0; //offset in history
+	int prev = 0; //size of previous line
 	while(1){
+		//await input
 		char c;
 		read(STDIN_FILENO,&c,1);
 		// fprintf(stderr,"%d (%c)\r\n",c,c); //for debug
+		
+		//handle input
 		if(c==1) pos = 0; //ctrl-a (go to line start)
 		else if(c==3) raise(SIGINT); //ctrl-c
 		else if(c==5) pos = line.size(); //ctrl-e (go to line end)
-		else if(c==10) break; //enter (newline)
-		else if(c==13) break; //enter (carriage return)
+		else if(c==10 || c==13){ //enter (newline or carriage return)
+			printf("\0338"); //load cursor pos
+			printf("%s%s",prompt.c_str(),line.c_str()); //display clean line with cursor at end
+			break;
+		}
+		else if(c==12){ //form feed (new page)
+			printf("\033[2J"); //clear screen
+			printf("\033[H"); //move cursor to upper left
+			printf("\0337"); //save cursor position
+		}
 		else if(c==26){ //ctrl-z
 			raise(SIGTSTP);
 			tcsetattr(STDIN_FILENO,TCSANOW,&raw); //must re-set raw mode
@@ -110,7 +128,7 @@ string read_line(const string& prompt="> "){
 		else{ //any other character
 			line.insert(pos,1,c);
 			pos++;
-			// fprintf(stderr,"line = [%s], pos = %d\n",line.c_str(),pos);
+			// fprintf(stderr,"line = [%s], pos = %d, c = %d\n",line.c_str(),pos,c);
 		}
 		
 		//clamp position
@@ -118,9 +136,31 @@ string read_line(const string& prompt="> "){
 		if(pos>line.size()) pos = line.size();
 		
 		//display line
-		printf("\033[2K"); //clear line
-		printf("\r%s%s",prompt.c_str(),line.c_str()); //write line
-		printf("\r\033[%dC",(int)(prompt.size()+pos)); //move cursor
+		printf("\0338"); //load cursor position
+		int next = printf("%s%s",prompt.c_str(),line.c_str());
+		
+		//erase any extra from previous line
+		int n;
+		for(n=next;n<prev;n++){
+			printf(" ");
+		}
+		prev = next;
+		
+		//get terminal size
+		winsize ws;
+		ioctl(1,TIOCGWINSZ,&ws);
+		int cols = ws.ws_col;
+		
+		//move cursor
+		printf("\0338"); //load cursor position
+		int down = (prompt.size()+pos)/cols;
+		if(down){ //if not 0 (minimum move is 1)
+			printf("\033[%dB",down); //move cursor down
+		}
+		int right = (prompt.size()+pos)%cols;
+		if(right){ //if not 0 (minimum move is 1)
+			printf("\033[%dC",right); //move cursor right
+		}
 		fflush(stdout);
 	}
 	
