@@ -150,19 +150,18 @@ string read_line(const string& prompt="> "){
 		winsize ws;
 		ioctl(1,TIOCGWINSZ,&ws);
 		int cols = ws.ws_col;
-		if(cols<1){
-			cols = 75;
-		}
 		
-		//move cursor
-		printf("\0338"); //load cursor position
-		int down = (prompt.size()+pos)/cols;
-		if(down){ //if not 0 (minimum move is 1)
-			printf("\033[%dB",down); //move cursor down
-		}
-		int right = (prompt.size()+pos)%cols;
-		if(right){ //if not 0 (minimum move is 1)
-			printf("\033[%dC",right); //move cursor right
+		//if terminal width found, move cursor to appropriate position
+		if(cols>0){
+			printf("\0338"); //load cursor position
+			int down = (prompt.size()+pos)/cols;
+			if(down){ //if not 0 (minimum move is 1)
+				printf("\033[%dB",down); //move cursor down
+			}
+			int right = (prompt.size()+pos)%cols;
+			if(right){ //if not 0 (minimum move is 1)
+				printf("\033[%dC",right); //move cursor right
+			}
 		}
 		fflush(stdout);
 	}
