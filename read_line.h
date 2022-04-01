@@ -150,6 +150,9 @@ string read_line(const string& prompt="> "){
 		winsize ws;
 		ioctl(1,TIOCGWINSZ,&ws);
 		int cols = ws.ws_col;
+		if(cols<1){
+			cols = 75;
+		}
 		
 		//move cursor
 		printf("\0338"); //load cursor position
