@@ -163,6 +163,10 @@ string read_line(const string& prompt="> "){
 				printf("\033[%dC",right); //move cursor right
 			}
 		}
+		//if width not found, fall back to single-line approach
+		else{
+			printf("\r\033[%dC",(int)(prompt.size()+pos)); //move cursor
+		}
 		fflush(stdout);
 	}
 	
