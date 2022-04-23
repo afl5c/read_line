@@ -56,8 +56,8 @@ The following navigation keys are supported
  - &darr; - Go down in history
  - &rarr; - Go right
  - &larr; - Go left 
- - ctrl-a - Go to start
- - ctrl-e - Go to end
+ - ctrl-a / home - Go to start
+ - ctrl-e / end - Go to end
  - ctlr-l - Clear screen (in case multiline input overflows terminal)
  - double-press esc - Erase line
 

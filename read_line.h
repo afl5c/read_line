@@ -79,7 +79,7 @@ string read_line(const string& prompt="> "){
 		//await input
 		char c;
 		read(STDIN_FILENO,&c,1);
-		// fprintf(stderr,"%d (%c)\r\n",c,c); //for debug
+		// fprintf(stderr,"%d (%c)\n",c,c); //for debug
 		
 		//handle input
 		if(c==1) pos = 0; //ctrl-a (go to line start)
@@ -102,11 +102,13 @@ string read_line(const string& prompt="> "){
 		else if(c==27){ //escape
 			//differentiate between escape sequence and escape to clear
 			read(STDIN_FILENO,&c,1);
+		
 			if(c==27){ //double escape
 				line = "";
 			}
 			else if(c=='['){ //escape sequence
 				read(STDIN_FILENO,&c,1);
+				
 				if(c=='A'){ //up
 					off = (off-1+history.size())%history.size();
 					line = history[off];
@@ -119,6 +121,8 @@ string read_line(const string& prompt="> "){
 				}
 				else if(c=='C') pos++; //right
 				else if(c=='D') pos--; //left
+				else if(c=='H') pos = 0; //home
+				else if(c=='F') pos = line.size(); //end
 			}
 		}
 		else if(c==127){ //backspace
