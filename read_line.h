@@ -102,13 +102,11 @@ string read_line(const string& prompt="> "){
 		else if(c==27){ //escape
 			//differentiate between escape sequence and escape to clear
 			read(STDIN_FILENO,&c,1);
-		
 			if(c==27){ //double escape
 				line = "";
 			}
 			else if(c=='['){ //escape sequence
 				read(STDIN_FILENO,&c,1);
-				
 				if(c=='A'){ //up
 					off = (off-1+history.size())%history.size();
 					line = history[off];
