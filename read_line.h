@@ -107,6 +107,7 @@ string read_line(const string& prompt="> "){
 			}
 			else if(c=='['){ //escape sequence
 				read(STDIN_FILENO,&c,1);
+				// fprintf(stderr," -> %d (%c)\n",c,c); //for debug
 				if(c=='A'){ //up
 					off = (off-1+history.size())%history.size();
 					line = history[off];
@@ -121,6 +122,11 @@ string read_line(const string& prompt="> "){
 				else if(c=='D') pos--; //left
 				else if(c=='H') pos = 0; //home
 				else if(c=='F') pos = line.size(); //end
+				else if(c=='3'){
+					read(STDIN_FILENO,&c,1);
+					// fprintf(stderr," ->> %d (%c)\n",c,c); //for debug
+					if(c=='~') line.erase(pos,1); //delete
+				}
 			}
 		}
 		else if(c==127){ //backspace
