@@ -25,7 +25,7 @@ string read_line_lazy(const string& prompt){
 	fflush(stdout);
 	string buf;
 	while(!feof(stdin)){
-		char c = fgetc(stdin);
+		int c = fgetc(stdin);
 		if(c=='\r') continue; //skip \r
 		if(c==EOF || c=='\n') break;
 		buf += c;
