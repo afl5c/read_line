@@ -83,7 +83,10 @@ string read_line(const string& prompt="> "){
 		
 		//handle input
 		if(c==1) pos = 0; //ctrl-a (go to line start)
-		else if(c==3) raise(SIGINT); //ctrl-c
+		else if(c==3){  //ctrl-c
+			tcsetattr(STDIN_FILENO,TCSANOW,&org); //put back original mode
+			raise(SIGINT);
+		}
 		else if(c==5) pos = line.size(); //ctrl-e (go to line end)
 		else if(c==10 || c==13){ //enter (newline or carriage return)
 			printf("\0338"); //load cursor pos
